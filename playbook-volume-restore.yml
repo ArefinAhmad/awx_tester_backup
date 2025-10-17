@@ -1,0 +1,16 @@
+---
+- name: Restore OpenStack Cinder Volume from Backup
+  hosts: localhost
+  gather_facts: false
+
+  collections:
+    - openstack.cloud
+
+  tasks:
+    - name: Restore volume from the specified backup
+      openstack.cloud.volume_backup_restore:
+        volume: "{{ volume_id }}"
+        backup: "{{ backup_id }}"
+        state: present
+        force: true  # <=== FORZA IL RIPRISTINO ANCHE SE IL VOLUME È IN USO
+      delegate_to: localhost # ESEGUE IL TASK SULLA MACCHINA LOCALE

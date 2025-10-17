@@ -1,0 +1,20 @@
+---
+- name: Debug Execution Environment
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Check installed Ansible collections
+      ansible.builtin.shell: ansible-galaxy collection list
+      register: galaxy_output
+
+    - name: Check installed Python packages for openstacksdk
+      ansible.builtin.shell: pip list | grep openstacksdk || true
+      register: pip_output
+
+    - name: Show installed collections
+      ansible.builtin.debug:
+        var: galaxy_output.stdout_lines
+
+    - name: Show openstacksdk package
+      ansible.builtin.debug:
+        var: pip_output.stdout_lines

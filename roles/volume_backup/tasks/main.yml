@@ -1,0 +1,10 @@
+---
+# Schedule backup of a volume via Cinder
+- name: Create backup of volume
+  openstack.cloud.volume_backup:
+    # **RIMOZIONE** di cloud: "{{ cloud_name }}"
+    volume: "{{ volume_id }}"
+    name: "backup-{{ volume_id }}-{{ lookup('pipe', 'date +%Y%m%d%H%M') }}" 
+    state: present
+    verify_ssl: false
+

@@ -1,0 +1,6 @@
+---
+cloud_name: "openstack"
+volume_id: "volume-id"
+backup_name: "my-volume-backup"
+backup_hour: "2"
+backup_weekday: "*"
