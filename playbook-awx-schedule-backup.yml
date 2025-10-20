@@ -1,13 +1,14 @@
 ---
 - name: Schedule Cinder Volume Backup Jobs on AWX
   hosts: localhost
+  connection: local
   gather_facts: false
   
   vars:
     # CORREZIONE: Usa esplicitamente HTTP per la connessione interna tra pod
-    awx_host: "http://awx-demo-service" 
-    awx_user: "admin"
-    awx_password: "0880" 
+    awx_host: "https://services.xaaslab.it/" 
+    awx_user: "arefin.ahmad"
+    awx_password: "2Qf6O|B#W£3a" 
     awx_validate_certs: false
 
   tasks:
