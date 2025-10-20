@@ -5,7 +5,7 @@
   
   vars:
     # CORREZIONE: Usa esplicitamente HTTP per la connessione interna tra pod
-    awx_host: "https://services.xaaslab.it/" 
+    awx_host: "https://services.xaaslab.it" 
     awx_user: "arefin"
     awx_password: "2Qf6O|B#W£3a" 
     awx_validate_certs: false
