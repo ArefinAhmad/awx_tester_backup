@@ -12,5 +12,4 @@
         volume: "{{ volume_id }}"
         backup: "{{ backup_id }}"
         state: present
-        force: true  # <=== FORZA IL RIPRISTINO ANCHE SE IL VOLUME È IN USO
       delegate_to: localhost # ESEGUE IL TASK SULLA MACCHINA LOCALE
