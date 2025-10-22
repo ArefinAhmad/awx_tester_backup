@@ -13,14 +13,26 @@
       register: backup_info
       delegate_to: localhost
 
+    - name: Fail if backup not found
+      ansible.builtin.fail:
+        msg: "Backup {{ backup_id }} not found"
+      when: backup_info.volume_backups | length == 0
+
+    - name: Debug environment variables
+      ansible.builtin.debug:
+        msg:
+          - "OS_AUTH_URL: {{ lookup('env', 'OS_AUTH_URL') }}"
+          - "OS_USERNAME: {{ lookup('env', 'OS_USERNAME') }}"
+          - "OS_PROJECT_NAME: {{ lookup('env', 'OS_PROJECT_NAME') }}"
+          - "OS_DOMAIN_NAME: {{ lookup('env', 'OS_DOMAIN_NAME') }}"
+          - "OS_REGION_NAME: {{ lookup('env', 'OS_REGION_NAME') }}"
+
     - name: Restore volume from backup using OpenStack CLI
-      ansible.builtin.command:
-        cmd: >
-          openstack volume backup restore
-          {{ backup_id }}
-          {{ volume_id }}
-      environment:
-        OS_CLOUD: "{{ os_cloud | default(omit) }}"
+      ansible.builtin.shell: |
+        export OS_USER_DOMAIN_NAME="${OS_DOMAIN_NAME:-default}"
+        export OS_PROJECT_DOMAIN_NAME="${OS_DOMAIN_NAME:-default}"
+        export OS_IDENTITY_API_VERSION=3
+        openstack volume backup restore {{ backup_id }} {{ volume_id }}
       register: restore_result
       delegate_to: localhost
 
