@@ -1,3 +1,0 @@
-openstacksdk
-
-ansible-core>=2.15

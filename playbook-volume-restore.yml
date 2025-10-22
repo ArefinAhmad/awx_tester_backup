@@ -7,9 +7,38 @@
     - openstack.cloud
 
   tasks:
-    - name: Restore volume from the specified backup
-      openstack.cloud.volume_backup_restore:
-        volume: "{{ volume_id }}"
-        backup: "{{ backup_id }}"
-        state: present
-      delegate_to: localhost # ESEGUE IL TASK SULLA MACCHINA LOCALE
+    - name: Check if backup exists
+      openstack.cloud.volume_backup_info:
+        name: "{{ backup_id }}"
+      register: backup_info
+      delegate_to: localhost
+
+    - name: Fail if backup not found
+      ansible.builtin.fail:
+        msg: "Backup {{ backup_id }} not found"
+      when: backup_info.volume_backups | length == 0
+
+    - name: Restore volume from backup using OpenStack CLI
+      ansible.builtin.command:
+        cmd: >
+          openstack volume backup restore
+          {{ backup_id }}
+          {{ volume_id }}
+      environment:
+        OS_CLOUD: "{{ os_cloud | default(omit) }}"
+      register: restore_result
+      delegate_to: localhost
+
+    - name: Display restore result
+      ansible.builtin.debug:
+        msg: "Restore initiated: {{ restore_result.stdout }}"
+
+    - name: Wait for volume to become available
+      openstack.cloud.volume_info:
+        name: "{{ volume_id }}"
+      register: volume_status
+      until: volume_status.volumes[0].status == 'available'
+      retries: 30
+      delay: 10
+      delegate_to: localhost
+      when: restore_result is succeeded
