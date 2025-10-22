@@ -13,27 +13,25 @@
       register: backup_info
       delegate_to: localhost
 
-    - name: Debug environment variables
-      ansible.builtin.debug:
-        msg:
-          - "OS_AUTH_URL: {{ lookup('env', 'OS_AUTH_URL') }}"
-          - "OS_USERNAME: {{ lookup('env', 'OS_USERNAME') }}"
-          - "OS_PROJECT_NAME: {{ lookup('env', 'OS_PROJECT_NAME') }}"
-          - "OS_DOMAIN_NAME: {{ lookup('env', 'OS_DOMAIN_NAME') }}"
-          - "OS_REGION_NAME: {{ lookup('env', 'OS_REGION_NAME') }}"
-
     - name: Restore volume from backup using OpenStack CLI
       ansible.builtin.shell: |
-        export OS_USER_DOMAIN_NAME="${OS_DOMAIN_NAME:-default}"
-        export OS_PROJECT_DOMAIN_NAME="${OS_DOMAIN_NAME:-default}"
-        export OS_IDENTITY_API_VERSION=3
-        openstack volume backup restore {{ backup_id }} {{ volume_id }}
+        openstack --os-auth-url "https://dashboard.xaaslab.it:5000" \
+                  --os-username "sourcesense" \
+                  --os-password "{{ os_password }}" \
+                  --os-project-name "awx_test" \
+                  --os-user-domain-name "default" \
+                  --os-project-domain-name "default" \
+                  --os-region-name "Milano" \
+                  --os-identity-api-version 3 \
+                  volume backup restore {{ backup_id }} {{ volume_id }}
       register: restore_result
       delegate_to: localhost
+      no_log: true
 
     - name: Display restore result
       ansible.builtin.debug:
-        msg: "Restore initiated: {{ restore_result.stdout }}"
+        msg: "Restore initiated successfully"
+      when: restore_result.rc == 0
 
     - name: Wait for volume to become available
       openstack.cloud.volume_info:
