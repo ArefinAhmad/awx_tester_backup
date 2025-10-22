@@ -23,7 +23,7 @@
                   --os-project-domain-name "default" \
                   --os-region-name "Milano" \
                   --os-identity-api-version 3 \
-                  volume backup restore {{ backup_id }} {{ volume_id }}
+                  volume backup restore {{ backup_id }} {{ volume_id }} --force
       register: restore_result
       delegate_to: localhost
       #no_log: true
