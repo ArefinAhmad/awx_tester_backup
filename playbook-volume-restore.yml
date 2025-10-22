@@ -26,19 +26,9 @@
                   volume backup restore {{ backup_id }} {{ volume_id }} --force
       register: restore_result
       delegate_to: localhost
-      #no_log: true
+      
 
     - name: Display restore result
       ansible.builtin.debug:
         msg: "Restore initiated successfully"
       when: restore_result.rc == 0
-
-    - name: Wait for volume to become available
-      openstack.cloud.volume_info:
-        name: "{{ volume_id }}"
-      register: volume_status
-      until: volume_status.volumes[0].status == 'available'
-      retries: 30
-      delay: 10
-      delegate_to: localhost
-      when: restore_result is succeeded
