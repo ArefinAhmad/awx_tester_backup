@@ -26,7 +26,7 @@
                   volume backup restore {{ backup_id }} {{ volume_id }}
       register: restore_result
       delegate_to: localhost
-      no_log: true
+      #no_log: true
 
     - name: Display restore result
       ansible.builtin.debug:
