@@ -13,11 +13,6 @@
       register: backup_info
       delegate_to: localhost
 
-    - name: Fail if backup not found
-      ansible.builtin.fail:
-        msg: "Backup {{ backup_id }} not found"
-      when: backup_info.volume_backups | length == 0
-
     - name: Restore volume from backup using OpenStack CLI
       ansible.builtin.command:
         cmd: >
